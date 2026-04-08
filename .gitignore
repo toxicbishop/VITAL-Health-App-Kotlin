@@ -1,0 +1,32 @@
+# General
+.DS_Store
+.idea/
+*.iml
+*.iws
+
+# Android / Gradle
+.gradle/
+local.properties
+/build/
+*/build/
+*/*/build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Log files
+*.log
+
+#text files
+*.txt
+
+# Environment
+.env
+
+# Keystore
+vital-release-key.jks
