@@ -5,5 +5,5 @@ plugins {
     id("com.google.devtools.ksp") version "2.3.6" apply false
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.0" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.0" apply false
-    id("org.jetbrains.kotlin.android") version "2.3.0" apply false
+
 }
