@@ -30,3 +30,5 @@ captures/
 
 # Keystore
 vital-release-key.jks
+
+proguard-rules.pro

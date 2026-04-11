@@ -1,7 +1,10 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.plugin.compose")
-    id("org.jetbrains.kotlin.android")
+
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("org.jetbrains.kotlin.plugin.serialization")
@@ -48,8 +51,8 @@ android {
 
     val envFile = project.rootProject.file(".env")
     if (envFile.exists()) {
-        val properties = java.util.Properties()
-        properties.load(java.io.FileInputStream(envFile))
+        val properties = Properties()
+        properties.load(FileInputStream(envFile))
         buildTypes.configureEach {
             buildConfigField("String", "SUPABASE_URL", "\"${properties.getProperty("SUPABASE_URL")}\"")
             buildConfigField("String", "SUPABASE_KEY", "\"${properties.getProperty("SUPABASE_KEY")}\"")
