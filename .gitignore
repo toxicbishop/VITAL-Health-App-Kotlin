@@ -32,3 +32,6 @@ captures/
 vital-release-key.jks
 
 proguard-rules.pro
+
+#Claude
+.claude/
