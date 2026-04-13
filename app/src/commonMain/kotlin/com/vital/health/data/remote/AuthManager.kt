@@ -7,12 +7,10 @@ import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.json.*
-import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
-@Singleton
-class AuthManager @Inject constructor(
+class AuthManager(
     private val supabase: SupabaseClient
 ) {
     val sessionStatus: StateFlow<SessionStatus> = supabase.auth.sessionStatus
@@ -42,9 +40,10 @@ class AuthManager @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     suspend fun uploadAvatar(bytes: ByteArray): String {
         val userId = currentUserId() ?: error("Not authenticated")
-        val fileName = "$userId/${UUID.randomUUID()}.jpg"
+        val fileName = "$userId/${Uuid.random()}.jpg"
         supabase.storage["avatars"].upload(fileName, bytes) { upsert = true }
         return supabase.storage["avatars"].publicUrl(fileName)
     }
