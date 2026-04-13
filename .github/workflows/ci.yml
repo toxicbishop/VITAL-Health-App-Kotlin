@@ -20,10 +20,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 25
+      - name: Set up JDKs (21 for runner, 25 for toolchain)
         uses: actions/setup-java@v4
         with:
-          java-version: '25'
+          java-version: |
+            21
+            25
           distribution: 'temurin'
           cache: 'gradle'
 
