@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.vital.health.data.local.HealthLogEntity
 import com.vital.health.data.repository.HealthRepository
 import com.vital.health.data.repository.SyncResult
-import dagger.hilt.android.lifecycle.HiltViewModel
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

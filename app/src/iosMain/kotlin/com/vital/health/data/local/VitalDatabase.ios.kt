@@ -4,9 +4,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import platform.Foundation.NSHomeDirectory
 
-actual object VitalDatabaseConstructor : androidx.room.RoomDatabaseConstructor<VitalDatabase> {
-    override fun initialize(): VitalDatabase = VitalDatabaseConstructor.initialize()
-}
+
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<VitalDatabase> {
     val dbFile = NSHomeDirectory() + "/vital_db.db"

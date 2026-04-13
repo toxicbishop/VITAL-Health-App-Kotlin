@@ -3,7 +3,7 @@ package com.vital.health.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vital.health.data.remote.AuthManager
-import dagger.hilt.android.lifecycle.HiltViewModel
+
 import io.github.jan.supabase.auth.status.SessionStatus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

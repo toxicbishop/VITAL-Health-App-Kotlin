@@ -1,4 +1,4 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 val envFile = project.rootProject.file(".env")
@@ -17,11 +18,7 @@ val supabaseUrl: String = envProps.getProperty("SUPABASE_URL") ?: ""
 val supabaseKey: String = envProps.getProperty("SUPABASE_KEY") ?: ""
 
 kotlin {
-    androidTarget {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
-        }
-    }
+    androidTarget()
     
     listOf(
         iosX64(),
@@ -38,6 +35,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -59,6 +57,7 @@ kotlin {
             
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
             
             implementation(libs.room.runtime)
             implementation(libs.sqlite.bundled)
@@ -84,6 +83,9 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "2.4.0"
+
+        buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
+        buildConfigField("String", "SUPABASE_KEY", "\"$supabaseKey\"")
     }
     packaging {
         resources {
@@ -106,9 +108,11 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
-    ksp(libs.room.compiler)
+    add("kspAndroid", libs.room.compiler)
+    add("kspIosX64", libs.room.compiler)
+    add("kspIosArm64", libs.room.compiler)
+    add("kspIosSimulatorArm64", libs.room.compiler)
 }
-
 room {
     schemaDirectory("$projectDir/schemas")
 }
