@@ -18,8 +18,7 @@ sealed interface SyncResult {
     data object NotSignedIn : SyncResult
 }
 
-@Singleton
-class HealthRepository @Inject constructor(
+class HealthRepository(
     private val localDao: HealthLogDao,
     private val supabase: SupabaseClient,
     private val authManager: AuthManager
