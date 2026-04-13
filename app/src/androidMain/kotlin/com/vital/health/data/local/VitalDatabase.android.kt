@@ -4,9 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-actual object VitalDatabaseConstructor : androidx.room.RoomDatabaseConstructor<VitalDatabase> {
-    override fun initialize(): VitalDatabase = VitalDatabaseConstructor.initialize()
-}
+
 
 fun getDatabaseBuilder(ctx: Context): RoomDatabase.Builder<VitalDatabase> {
     val appContext = ctx.applicationContext

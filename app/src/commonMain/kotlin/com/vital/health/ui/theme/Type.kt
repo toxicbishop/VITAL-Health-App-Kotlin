@@ -5,42 +5,28 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.googlefonts.GoogleFont
-import androidx.compose.ui.text.googlefonts.Font
-import com.vital.health.R
 
-val provider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = R.array.com_google_android_gms_fonts_certs
-)
-
-val PlayfairDisplay = FontFamily(
-    Font(googleFont = GoogleFont("Playfair Display"), fontProvider = provider)
-)
-
-val Inter = FontFamily(
-    Font(googleFont = GoogleFont("Inter"), fontProvider = provider)
-)
+// Default Typography using system fonts for stable KMP build.
+// Custom Google Fonts can be reintroduced properly once dependencies are resolved.
 
 val Typography = Typography(
     displayLarge = TextStyle(
-        fontFamily = PlayfairDisplay,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 38.sp
     ),
     headlineMedium = TextStyle(
-        fontFamily = PlayfairDisplay,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 28.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = Inter,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp
     ),
     labelSmall = TextStyle(
-        fontFamily = Inter,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp
     )
