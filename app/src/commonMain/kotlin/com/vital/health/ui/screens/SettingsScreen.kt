@@ -8,8 +8,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Info
@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.vital.health.ui.theme.*
+import com.vital.health.util.PlatformSettings
 
 @Composable
 fun SettingsScreenContent(
@@ -44,6 +45,7 @@ fun SettingsScreenContent(
     var showNotifications by remember { mutableStateOf(false) }
     var showBackupConfirm by remember { mutableStateOf(false) }
     var showRestoreConfirm by remember { mutableStateOf(false) }
+    val settings = remember { PlatformSettings() }
 
     Column(
         modifier = Modifier
@@ -81,7 +83,10 @@ fun SettingsScreenContent(
                 SettingsItem(
                     icon = Icons.Outlined.Settings, label = "Dark Mode", isToggle = true, hasBorder = true,
                     checked = isAppDarkMode,
-                    onCheckedChange = { isAppDarkMode = it }
+                    onCheckedChange = { 
+                        isAppDarkMode = it
+                        settings.putBoolean("dark_mode", it)
+                    }
                 )
                 SettingsItem(icon = Icons.Outlined.Info, label = "Health Goals", isToggle = false, hasBorder = true, onClick = { showHealthGoals = true })
                 SettingsItem(icon = Icons.Outlined.Notifications, label = "Notifications", isToggle = false, hasBorder = true, onClick = { showNotifications = true })
@@ -98,7 +103,7 @@ fun SettingsScreenContent(
             colors = ButtonDefaults.buttonColors(containerColor = VitalError, contentColor = Color.White),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Icon(Icons.Filled.ExitToApp, contentDescription = "Sign Out", modifier = Modifier.padding(end = 8.dp))
+            Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sign Out", modifier = Modifier.padding(end = 8.dp))
             Text("Sign Out", fontWeight = FontWeight.Bold, fontSize = 16.sp)
         }
 
@@ -152,7 +157,7 @@ fun SettingsItem(
         if (isToggle) {
             Switch(checked = checked, onCheckedChange = onCheckedChange, colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = PrimaryBlack))
         } else {
-            Icon(Icons.Filled.ArrowForward, contentDescription = "Arrow", tint = TextMuted, modifier = Modifier.size(16.dp))
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Arrow", tint = TextMuted, modifier = Modifier.size(16.dp))
         }
     }
     if (hasBorder) { HorizontalDivider(color = TanButton, modifier = Modifier.padding(horizontal = 16.dp)) }
@@ -191,10 +196,11 @@ fun EditProfileDialog(currentName: String, currentAvatarUrl: String?, onDismiss:
 
 @Composable
 fun HealthGoalsDialog(onDismiss: () -> Unit) {
-    var targetWeight by remember { mutableStateOf("") }
-    var targetBP by remember { mutableStateOf("") }
-    var dailySteps by remember { mutableStateOf("") }
-    var waterIntake by remember { mutableStateOf("") }
+    val settings = remember { PlatformSettings() }
+    var targetWeight by remember { mutableStateOf(settings.getString("target_weight", "") ?: "") }
+    var targetBP by remember { mutableStateOf(settings.getString("target_bp", "") ?: "") }
+    var dailySteps by remember { mutableStateOf(settings.getString("daily_steps", "") ?: "") }
+    var waterIntake by remember { mutableStateOf(settings.getString("water_intake", "") ?: "") }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -209,6 +215,10 @@ fun HealthGoalsDialog(onDismiss: () -> Unit) {
         },
         confirmButton = {
             Button(onClick = {
+                settings.putString("target_weight", targetWeight)
+                settings.putString("target_bp", targetBP)
+                settings.putString("daily_steps", dailySteps)
+                settings.putString("water_intake", waterIntake)
                 onDismiss()
             }, colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlack)) { Text("Save", color = CreamBg) }
         },
@@ -219,11 +229,12 @@ fun HealthGoalsDialog(onDismiss: () -> Unit) {
 
 @Composable
 fun NotificationsDialog(onDismiss: () -> Unit) {
-    var medReminders by remember { mutableStateOf(true) }
-    var vitalsReminder by remember { mutableStateOf(true) }
-    var weeklySummary by remember { mutableStateOf(true) }
-    var quietHours by remember { mutableStateOf(false) }
-    var soundEnabled by remember { mutableStateOf(true) }
+    val settings = remember { PlatformSettings() }
+    var medReminders by remember { mutableStateOf(settings.getBoolean("med_reminders", true)) }
+    var vitalsReminder by remember { mutableStateOf(settings.getBoolean("vitals_reminder", true)) }
+    var weeklySummary by remember { mutableStateOf(settings.getBoolean("weekly_summary", true)) }
+    var quietHours by remember { mutableStateOf(settings.getBoolean("quiet_hours", false)) }
+    var soundEnabled by remember { mutableStateOf(settings.getBoolean("sound", true)) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -243,6 +254,11 @@ fun NotificationsDialog(onDismiss: () -> Unit) {
         },
         confirmButton = {
             Button(onClick = {
+                settings.putBoolean("med_reminders", medReminders)
+                settings.putBoolean("vitals_reminder", vitalsReminder)
+                settings.putBoolean("weekly_summary", weeklySummary)
+                settings.putBoolean("quiet_hours", quietHours)
+                settings.putBoolean("sound", soundEnabled)
                 onDismiss()
             }, colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlack)) { Text("Save", color = Color.White) }
         },

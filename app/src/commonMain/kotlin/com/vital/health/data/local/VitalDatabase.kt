@@ -7,7 +7,7 @@ import androidx.room.RoomDatabaseConstructor
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
 
-@Database(entities = [HealthLogEntity::class], version = 2, exportSchema = false)
+@Database(entities = [HealthLogEntity::class], version = 2, exportSchema = true)
 @ConstructedBy(VitalDatabaseConstructor::class)
 abstract class VitalDatabase : RoomDatabase() {
     abstract fun healthLogDao(): HealthLogDao

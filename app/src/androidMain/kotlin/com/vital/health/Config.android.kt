@@ -5,12 +5,13 @@ actual object Config {
     actual val SUPABASE_KEY: String = readConfigValue("SUPABASE_KEY")
 
     private fun readConfigValue(fieldName: String): String {
-        val value = runCatching {
-            val buildConfigClass = Class.forName("com.vital.health.BuildConfig")
-            buildConfigClass.getField(fieldName).get(null) as? String
-        }.getOrNull()
+        val value = when (fieldName) {
+            "SUPABASE_URL" -> BuildConfig.SUPABASE_URL
+            "SUPABASE_KEY" -> BuildConfig.SUPABASE_KEY
+            else -> throw IllegalArgumentException("Unsupported Android config field '$fieldName'")
+        }
 
-        return value?.takeIf { it.isNotBlank() }
+        return value.takeIf { it.isNotBlank() }
             ?: throw IllegalStateException(
                 "Missing Android config for '$fieldName'. Provide it via generated BuildConfig fields or another injected configuration source."
             )
