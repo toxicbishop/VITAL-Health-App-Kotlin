@@ -38,50 +38,45 @@ class MainActivity : ComponentActivity() {
                     val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
                     val isLoading by authViewModel.isLoading.collectAsState()
                     val errorMessage by authViewModel.errorMessage.collectAsState()
-                    var onboardingDone by remember { mutableStateOf(sharedPrefs.getBoolean("onboarding_done", false)) }
+                    var onboardingDone by remember {
+                        mutableStateOf(sharedPrefs.getBoolean("onboarding_done", false))
+                    }
 
                     if (isLoggedIn) {
-                        // Logged in → show dashboard
                         val viewModel: HealthViewModel = hiltViewModel()
                         val logs by viewModel.healthLogs.collectAsState()
+                        val userName by authViewModel.userName.collectAsState()
+                        val userEmail by authViewModel.userEmail.collectAsState()
+                        val userAvatarUrl by authViewModel.userAvatarUrl.collectAsState()
 
                         DashboardScreen(
                             logs = logs,
-                            userName = authViewModel.userName,
-                            userEmail = authViewModel.userEmail ?: "",
-                            userAvatarUrl = authViewModel.userAvatarUrl,
+                            userName = userName,
+                            userEmail = userEmail ?: "",
+                            userAvatarUrl = userAvatarUrl,
                             onSaveProfile = { newName, photoBytes ->
                                 authViewModel.updateProfile(newName, photoBytes)
                             },
                             onAddLog = { type, value, unit, notes ->
                                 viewModel.addLog(type, value, unit, notes)
                             },
-                            onSync = {
-                                viewModel.sync()
-                            },
-                            onBackup = {
-                                viewModel.backup()
-                            },
-                            onRestore = {
-                                viewModel.restore()
-                            },
-                            onLogout = {
-                                authViewModel.logout()
-                            }
+                            onSync = { viewModel.sync() },
+                            onBackup = { viewModel.backup() },
+                            onRestore = { viewModel.restore() },
+                            onLogout = { authViewModel.logout() }
                         )
                     } else if (!onboardingDone) {
-                        // First time → onboarding with signup
                         OnboardingScreen(
                             isLoading = isLoading,
                             errorMessage = errorMessage,
                             onComplete = { email, password, name ->
-                                authViewModel.signUp(email, password)
-                                authViewModel.updateProfile(name, null)
-                                onboardingDone = true
+                                authViewModel.signUpAndSetProfile(email, password, name) {
+                                    sharedPrefs.edit().putBoolean("onboarding_done", true).apply()
+                                    onboardingDone = true
+                                }
                             }
                         )
                     } else {
-                        // Returning user → login screen
                         AuthScreen(
                             isLoading = isLoading,
                             errorMessage = errorMessage,

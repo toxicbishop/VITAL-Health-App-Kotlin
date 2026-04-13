@@ -1,14 +1,16 @@
 package com.vital.health.ui.viewmodels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vital.health.data.remote.AuthManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.auth.status.SessionStatus
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,41 +19,42 @@ class AuthViewModel @Inject constructor(
     private val authManager: AuthManager
 ) : ViewModel() {
 
-    // Automatically picks up cached session perfectly when the app launches!
     val isLoggedIn: StateFlow<Boolean> = authManager.sessionStatus
         .map { it is SessionStatus.Authenticated }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = authManager.currentUserId() != null
+            initialValue = authManager.isAuthenticated()
         )
 
+    val userEmail: StateFlow<String?> = authManager.sessionStatus
+        .map { authManager.currentUserEmail() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), authManager.currentUserEmail())
+
+    val userName: StateFlow<String> = authManager.sessionStatus
+        .map { deriveName() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), deriveName())
+
+    val userAvatarUrl: StateFlow<String?> = authManager.sessionStatus
+        .map { authManager.currentUserAvatar() }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), authManager.currentUserAvatar())
+
     private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _errorMessage = MutableStateFlow<String?>(null)
-    val errorMessage: StateFlow<String?> = _errorMessage
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    val userEmail: String?
-        get() = authManager.currentUserEmail()
-        
-    var userName by mutableStateOf(authManager.currentUserName() ?: (userEmail?.substringBefore("@")?.replaceFirstChar { it.uppercase() } ?: "User"))
-        private set
-        
-    var userAvatarUrl by mutableStateOf(authManager.currentUserAvatar())
-        private set
+    private fun deriveName(): String =
+        authManager.currentUserName()
+            ?: authManager.currentUserEmail()?.substringBefore("@")?.replaceFirstChar { it.uppercase() }
+            ?: "User"
 
     fun updateProfile(name: String, photoBytes: ByteArray?) {
         viewModelScope.launch {
             try {
-                var newAvatarUrl = userAvatarUrl
-                if (photoBytes != null) {
-                    val fileName = "${authManager.currentUserId()}_avatar.jpg"
-                    newAvatarUrl = authManager.uploadAvatar(photoBytes, fileName)
-                }
-                authManager.updateProfile(name, newAvatarUrl)
-                userName = name
-                userAvatarUrl = newAvatarUrl
+                val avatarUrl = photoBytes?.let { authManager.uploadAvatar(it) }
+                authManager.updateProfile(name, avatarUrl)
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to update profile: ${e.message}"
             }
@@ -78,6 +81,31 @@ class AuthViewModel @Inject constructor(
             _errorMessage.value = null
             try {
                 authManager.signUp(email, pass)
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Sign up failed"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun signUpAndSetProfile(
+        email: String,
+        pass: String,
+        name: String,
+        onSuccess: () -> Unit
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+            try {
+                authManager.signUp(email, pass)
+                if (authManager.isAuthenticated()) {
+                    authManager.updateProfile(name, null)
+                    onSuccess()
+                } else {
+                    _errorMessage.value = "Check your email to confirm the account, then sign in."
+                }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Sign up failed"
             } finally {
