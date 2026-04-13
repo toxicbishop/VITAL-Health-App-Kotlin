@@ -29,9 +29,10 @@ captures/
 .env
 
 # Keystore
-vital-release-key.jks
+*.jks
 
 proguard-rules.pro
 
 #Claude
 .claude/
+keystore.properties

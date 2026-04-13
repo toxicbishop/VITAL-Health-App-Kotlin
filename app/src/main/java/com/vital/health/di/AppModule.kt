@@ -43,7 +43,9 @@ object AppModule {
             context,
             VitalDatabase::class.java,
             "vital_db"
-        ).build()
+        )
+            .addMigrations(VitalDatabase.MIGRATION_1_2)
+            .build()
     }
 
     @Provides
@@ -55,5 +57,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRepository(dao: HealthLogDao, supabase: SupabaseClient): HealthRepository = HealthRepository(dao, supabase)
+    fun provideRepository(
+        dao: HealthLogDao,
+        supabase: SupabaseClient,
+        authManager: AuthManager
+    ): HealthRepository = HealthRepository(dao, supabase, authManager)
 }

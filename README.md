@@ -137,22 +137,28 @@ com.vital.health/
    ```sql
    CREATE TABLE health_logs (
      id TEXT PRIMARY KEY,
-     logType TEXT NOT NULL,
+     "userId" UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+     "logType" TEXT NOT NULL,
      value TEXT NOT NULL,
      unit TEXT NOT NULL,
      notes TEXT,
      timestamp BIGINT NOT NULL,
-     isSynced BOOLEAN DEFAULT TRUE
+     "isSynced" BOOLEAN DEFAULT TRUE
    );
+   ALTER TABLE health_logs ENABLE ROW LEVEL SECURITY;
+   CREATE POLICY "owner read"   ON health_logs FOR SELECT USING (auth.uid() = "userId");
+   CREATE POLICY "owner insert" ON health_logs FOR INSERT WITH CHECK (auth.uid() = "userId");
+   CREATE POLICY "owner update" ON health_logs FOR UPDATE USING (auth.uid() = "userId");
+   CREATE POLICY "owner delete" ON health_logs FOR DELETE USING (auth.uid() = "userId");
    ```
-4. Create an `avatars` storage bucket (public)
+4. Create an `avatars` storage bucket. Keep it **private** and add RLS policies that allow users to read/write only paths prefixed with their own `auth.uid()`.
 
 ### Configuration
 
-1. Open `app/src/main/java/com/vital/health/di/AppModule.kt`
-2. Replace `supabaseUrl` and `supabaseKey` with your project credentials
+1. Copy `.env.example` to `.env` at the project root and fill in `SUPABASE_URL` and `SUPABASE_KEY`.
+2. For release builds, copy `keystore.properties.example` to `keystore.properties` and fill in your keystore credentials, **or** set `VITAL_KEYSTORE_PASSWORD`, `VITAL_KEY_ALIAS`, `VITAL_KEY_PASSWORD` as environment variables. Both files are gitignored.
 
-> **Never commit production secrets to public repositories.**
+> **Never commit production secrets, keystores, or their passwords to version control.**
 
 ### Build & Run
 
