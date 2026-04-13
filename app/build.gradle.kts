@@ -13,11 +13,12 @@ plugins {
 }
 
 val envFile = project.rootProject.file(".env")
-val envProps = Properties().apply { if (envFile.exists()) load(FileInputStream(envFile)) }
+val envProps = Properties().apply { if (envFile.exists()) envFile.inputStream().use { load(it) } }
 val supabaseUrl: String = envProps.getProperty("SUPABASE_URL") ?: ""
 val supabaseKey: String = envProps.getProperty("SUPABASE_KEY") ?: ""
 
 kotlin {
+    jvmToolchain(21)
     androidTarget()
     
     listOf(

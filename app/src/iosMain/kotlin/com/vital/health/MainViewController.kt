@@ -12,6 +12,7 @@ fun MainViewController(): UIViewController {
     }
 
     val settings = PlatformSettings()
+    com.vital.health.ui.theme.isAppDarkMode = settings.getBoolean("dark_mode", false)
     val onboardingDone = settings.getBoolean("onboarding_done", false)
 
     return ComposeUIViewController {

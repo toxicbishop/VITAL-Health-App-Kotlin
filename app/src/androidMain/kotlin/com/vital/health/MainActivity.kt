@@ -9,16 +9,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        val sharedPrefs = getSharedPreferences("vital_prefs", android.content.Context.MODE_PRIVATE)
-        isAppDarkMode = sharedPrefs.getBoolean("dark_mode", false)
+        val settings = com.vital.health.util.PlatformSettings()
+        isAppDarkMode = settings.getBoolean("dark_mode", false)
         
-        val onboardingDoneStored = sharedPrefs.getBoolean("onboarding_done", false)
+        val onboardingDoneStored = settings.getBoolean("onboarding_done", false)
 
         setContent {
             App(
                 onboardingDoneStored = onboardingDoneStored,
                 onSaveOnboarding = { done ->
-                    sharedPrefs.edit().putBoolean("onboarding_done", done).apply()
+                    settings.putBoolean("onboarding_done", done)
                 }
             )
         }
