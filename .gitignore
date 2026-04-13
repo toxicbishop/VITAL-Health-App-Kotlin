@@ -35,4 +35,3 @@ proguard-rules.pro
 
 #Claude
 .claude/
-keystore.properties
