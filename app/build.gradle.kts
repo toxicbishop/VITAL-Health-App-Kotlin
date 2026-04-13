@@ -18,7 +18,7 @@ val supabaseUrl: String = envProps.getProperty("SUPABASE_URL") ?: ""
 val supabaseKey: String = envProps.getProperty("SUPABASE_KEY") ?: ""
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     androidTarget()
     
     listOf(
@@ -99,8 +99,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
     buildFeatures {
         buildConfig = true
