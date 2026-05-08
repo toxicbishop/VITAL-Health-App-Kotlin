@@ -37,3 +37,6 @@ proguard-rules.pro
 .claude/
 
 keystore.properties
+
+# Kotlin
+.kotlin/
