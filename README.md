@@ -4,8 +4,8 @@
 
 **A premium, offline-first health tracking app built with Jetpack Compose & Supabase**
 
-[![Build Status](https://github.com/toxicbishop/-VITAL-Health-App-Kotlin/actions/workflows/build.yml/badge.svg)](https://github.com/toxicbishop/-VITAL-Health-App-Kotlin/actions/workflows/build.yml)
-[![CodeQL](https://github.com/toxicbishop/-VITAL-Health-App-Kotlin/actions/workflows/codeql.yml/badge.svg)](https://github.com/toxicbishop/-VITAL-Health-App-Kotlin/actions/workflows/codeql.yml)
+[![Build Status](https://github.com/toxicbishop/VITAL-Health-App-Kotlin/actions/workflows/build.yml/badge.svg)](https://github.com/toxicbishop/VITAL-Health-App-Kotlin/actions/workflows/build.yml)
+[![CodeQL](https://github.com/toxicbishop/VITAL-Health-App-Kotlin/actions/workflows/codeql.yml/badge.svg)](https://github.com/toxicbishop/VITAL-Health-App-Kotlin/actions/workflows/codeql.yml)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.0-purple?logo=kotlin)](https://kotlinlang.org)
 [![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-Material_3-blue?logo=jetpackcompose)](https://developer.android.com/jetpack/compose)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-green?logo=supabase)](https://supabase.com)
